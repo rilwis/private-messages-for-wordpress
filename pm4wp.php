@@ -237,16 +237,44 @@ function rwpm_send() {
 	<?php
  				// if message is not sent (by errors) or in case of replying, all input are saved
 
-		$recipient = !empty( $_POST['recipient'] ) ? $_POST['recipient'] : ( !empty( $_GET['recipient'] )
-			? $_GET['recipient'] : '' );
 
-		// strip slashes if needed
-		$subject = isset( $_REQUEST['subject'] ) ? ( get_magic_quotes_gpc() ? stripcslashes( $_REQUEST['subject'] )
-			: $_REQUEST['subject'] ) : '';
-		$subject = urldecode( $subject );  // for some chars like '?' when reply
-		$content = isset( $_REQUEST['content'] ) ? ( get_magic_quotes_gpc() ? stripcslashes( $_REQUEST['content'] )
-			: $_REQUEST['content'] ) : '';
-
+		$recipient = "";
+		$subject = "";
+		$content = "";
+		
+		if ($_GET["msgID"])
+		{
+		  // preload fields with selected message
+			$current_user = wp_get_current_user();
+			$sql = $wpdb->prepare("SELECT * FROM ".$wpdb->prefix."pm WHERE id = %d AND recipient = '%s'",$_GET["msgID"],$current_user->user_login);
+			$message = $wpdb->get_row( $sql );
+			if ($message)
+			{
+				$recipient = $wpdb->get_var( "SELECT display_name FROM $wpdb->users WHERE user_login = '$message->sender'" );
+				$subject = $message->subject;
+				$content = $message->content;
+				
+				$subject = preg_replace("/^(Re[^a-zA-Z]*:\s*)/i","",$subject);
+				$subject = preg_replace("/^(Fwd[^a-zA-Z]*:\s*)/i","",$subject);
+				$subject = "Re: ".$subject;
+				
+				$content = "> ".str_replace("\n","\n> ",$content)."\n\n";
+			}
+		}
+		
+		$post = $_POST;
+		if ( get_magic_quotes_gpc( ) )
+			$post = array_map( 'stripslashes_deep', $post );
+		
+		if ($post['recipient'])
+			$recipient = $post['recipient'];
+		if ($post['subject'])
+			$subject = $post['subject'];
+		if ($post['content'])
+			$content = $post['content'];
+		
+		
+		
 		// Get all users of blog
 		$users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
 
@@ -263,6 +291,10 @@ function rwpm_send() {
 							}
 							echo 'var data = ' . json_encode( $all );
 							?>
+							jQuery(document).ready(function($) {
+								$('#recipient').autoSuggest(data<?=($recipient?(",{preFill:\"".esc_js($recipient)."\"}"):"")?>);
+							});
+							
 					</script>
 					</span>
 							<?php
