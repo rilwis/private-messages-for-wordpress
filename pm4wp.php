@@ -237,16 +237,44 @@ function rwpm_send() {
 	<?php
  				// if message is not sent (by errors) or in case of replying, all input are saved
 
-		$recipient = !empty( $_POST['recipient'] ) ? $_POST['recipient'] : ( !empty( $_GET['recipient'] )
-			? $_GET['recipient'] : '' );
 
-		// strip slashes if needed
-		$subject = isset( $_REQUEST['subject'] ) ? ( get_magic_quotes_gpc() ? stripcslashes( $_REQUEST['subject'] )
-			: $_REQUEST['subject'] ) : '';
-		$subject = urldecode( $subject );  // for some chars like '?' when reply
-		$content = isset( $_REQUEST['content'] ) ? ( get_magic_quotes_gpc() ? stripcslashes( $_REQUEST['content'] )
-			: $_REQUEST['content'] ) : '';
-
+		$recipient = "";
+		$subject = "";
+		$content = "";
+		
+		if ($_GET["msgID"])
+		{
+		  // preload fields with selected message
+			$current_user = wp_get_current_user();
+			$sql = $wpdb->prepare("SELECT * FROM ".$wpdb->prefix."pm WHERE id = %d AND recipient = '%s'",$_GET["msgID"],$current_user->user_login);
+			$message = $wpdb->get_row( $sql );
+			if ($message)
+			{
+				$recipient = $wpdb->get_var( "SELECT display_name FROM $wpdb->users WHERE user_login = '$message->sender'" );
+				$subject = $message->subject;
+				$content = $message->content;
+				
+				$subject = preg_replace("/^(Re[^a-zA-Z]*:\s*)/i","",$subject);
+				$subject = preg_replace("/^(Fwd[^a-zA-Z]*:\s*)/i","",$subject);
+				$subject = "Re: ".$subject;
+				
+				$content = "> ".str_replace("\n","\n> ",$content)."\n\n";
+			}
+		}
+		
+		$post = $_POST;
+		if ( get_magic_quotes_gpc( ) )
+			$post = array_map( 'stripslashes_deep', $post );
+		
+		if ($post['recipient'])
+			$recipient = $post['recipient'];
+		if ($post['subject'])
+			$subject = $post['subject'];
+		if ($post['content'])
+			$content = $post['content'];
+		
+		
+		
 		// Get all users of blog
 		$users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
 
@@ -263,6 +291,10 @@ function rwpm_send() {
 							}
 							echo 'var data = ' . json_encode( $all );
 							?>
+							jQuery(document).ready(function($) {
+								$('#recipient').autoSuggest(data<?=($recipient?(",{preFill:\"".esc_js($recipient)."\"}"):"")?>);
+							});
+							
 					</script>
 					</span>
 							<?php
@@ -343,7 +375,7 @@ function rwpm_inbox() {
 							<a class="delete" href="<?php echo wp_nonce_url( "?page=rwpm_inbox&action=delete&id=$msg->id", 'rwpm-delete_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Delete', 'pm4wp' ); ?></a>
 						</span>
 						<span class="reply">
-							| <a class="reply" href="<?php echo wp_nonce_url( "?page=rwpm_send&recipient=$msg->sender&subject=Re: " . stripcslashes( $msg->subject ), 'rwpm-reply_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Reply', 'pm4wp' ); ?></a>
+							| <a class="reply" href="<?php echo wp_nonce_url( "?page=rwpm_send&msgID=".$msg->id, 'rwpm-reply_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Reply', 'pm4wp' ); ?></a>
 						</span>
 				</td>
 			</tr>
@@ -704,3 +736,26 @@ function rwpm_notify() {
 		echo '<div id="message" class="error"><p><b>', sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ), '</b> <a href="admin.php?page=rwpm_inbox">', __( 'Click here to go to inbox', 'pm4wp' ), ' &raquo;</a></p></div>';
 	}
 }
+
+function rwpm_adminbar() {
+  global $wp_admin_bar;
+	global $wpdb, $current_user;
+
+	// get number of unread messages
+	$num_unread = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
+
+	if ( empty( $num_unread ) ) {
+		$num_unread = 0;
+	}
+  
+  if ($num_unread && is_admin_bar_showing() )
+  {
+    $wp_admin_bar->add_menu( array(
+      'id' => 'rwpm',
+      'title' => sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ),
+      'href' => admin_url( 'admin.php?page=rwpm_inbox' ),
+      'meta' => array('class'=>"rwpm_newmessages"),
+    ) ); 
+  }    
+}
+add_action('admin_bar_menu', "rwpm_adminbar", 300);
