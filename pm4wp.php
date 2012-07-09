@@ -704,3 +704,26 @@ function rwpm_notify() {
 		echo '<div id="message" class="error"><p><b>', sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ), '</b> <a href="admin.php?page=rwpm_inbox">', __( 'Click here to go to inbox', 'pm4wp' ), ' &raquo;</a></p></div>';
 	}
 }
+
+function rwpm_adminbar() {
+  global $wp_admin_bar;
+	global $wpdb, $current_user;
+
+	// get number of unread messages
+	$num_unread = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
+
+	if ( empty( $num_unread ) ) {
+		$num_unread = 0;
+	}
+  
+  if ($num_unread && is_admin_bar_showing() )
+  {
+    $wp_admin_bar->add_menu( array(
+      'id' => 'rwpm',
+      'title' => sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ),
+      'href' => admin_url( 'admin.php?page=rwpm_inbox' ),
+      'meta' => array('class'=>"rwpm_newmessages"),
+    ) ); 
+  }    
+}
+add_action('admin_bar_menu', "rwpm_adminbar", 300);
