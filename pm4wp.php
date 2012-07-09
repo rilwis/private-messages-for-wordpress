@@ -375,7 +375,7 @@ function rwpm_inbox() {
 							<a class="delete" href="<?php echo wp_nonce_url( "?page=rwpm_inbox&action=delete&id=$msg->id", 'rwpm-delete_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Delete', 'pm4wp' ); ?></a>
 						</span>
 						<span class="reply">
-							| <a class="reply" href="<?php echo wp_nonce_url( "?page=rwpm_send&recipient=$msg->sender&subject=Re: " . stripcslashes( $msg->subject ), 'rwpm-reply_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Reply', 'pm4wp' ); ?></a>
+							| <a class="reply" href="<?php echo wp_nonce_url( "?page=rwpm_send&msgID=".$msg->id, 'rwpm-reply_inbox_msg_' . $msg->id ); ?>"><?php _e( 'Reply', 'pm4wp' ); ?></a>
 						</span>
 				</td>
 			</tr>
