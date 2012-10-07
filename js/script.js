@@ -31,6 +31,13 @@ jQuery( document ).ready( function ( $ )
 		}
 	} );
 
+    /**
+     * Split string into multiple values, separated by commas
+     *
+     * @param val
+     *
+     * @return array
+     */
 	function split( val )
 	{
 		return val.split( /,\s*/ );
