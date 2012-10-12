@@ -33,7 +33,7 @@ register_activation_hook( __FILE__, 'rwpm_activate' );
 add_action( 'plugins_loaded', 'rwpm_load_text_domain' );
 add_action( 'admin_notices', 'rwpm_notify' );
 add_action( 'admin_bar_menu', 'rwpm_adminbar', 300 );
-add_action( 'wp_ajax_pm4wp_get_users', 'pm4wp_get_users' );
+add_action( 'wp_ajax_rwpm_get_users', 'rwpm_get_users' );
 
 /**
  * Load plugin text domain
@@ -133,7 +133,7 @@ function rwpm_adminbar()
 	}
 }
 
-function pm4wp_get_users()
+function rwpm_get_users()
 {
 	global $wpdb;
 

@@ -4,7 +4,7 @@ jQuery( document ).ready( function ( $ )
 		source: function ( request, response )
 		{
 			var data = {
-				action: 'pm4wp_get_users',
+				action: 'rwpm_get_users',
 				term  : request.term
 			};
 			$.post( ajaxurl, data, function ( r )
