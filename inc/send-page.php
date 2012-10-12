@@ -138,9 +138,14 @@ if ( $_REQUEST['page'] == 'rwpm_send' && isset( $_POST['submit'] ) ) {
                 $subject = isset( $_REQUEST['subject'] ) ? ( get_magic_quotes_gpc( ) ? stripcslashes( $_REQUEST['subject'] )
                     : $_REQUEST['subject'] ) : '';
                 $subject = urldecode( $subject );  // for some chars like '?' when reply
-                $content = isset( $_REQUEST['content'] ) ? ( get_magic_quotes_gpc( ) ? stripcslashes( $_REQUEST['content'] )
-                    : $_REQUEST['content'] ) : '';
-
+                $id= $_GET['id'];
+                if(empty($id)){
+                    $content = isset( $_REQUEST['content'] ) ? ( get_magic_quotes_gpc( ) ? stripcslashes( $_REQUEST['content'] ): $_REQUEST['content'] ) : '';
+                }else
+                {
+                    $msg = $wpdb->get_row('SELECT * FROM ' . $wpdb->prefix . 'pm WHERE `id` = "' . $id . '" LIMIT 1');
+                    $content = "In: " . $msg->date ."\t". $msg->sender . " Wrote:\n" . $msg->content;
+                }
                 // Get all users of blog
                 $users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
 
@@ -171,7 +176,7 @@ if ( $_REQUEST['page'] == 'rwpm_send' && isset( $_POST['submit'] ) ) {
         </tr>
         <tr>
             <th><?php _e( 'Content', 'pm4wp' ); ?></th>
-            <td><textarea cols="50" rows="10" name="content"><?php echo $content; ?></textarea></td>
+            <th><?php  wp_editor( $content, 'rw-text-editor', $settings = array('textarea_name' => 'content') );?></th>
         </tr>
     </table>
     <p class="submit" id="submit">
