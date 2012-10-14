@@ -96,7 +96,7 @@ function rwpm_notify()
 	global $wpdb, $current_user;
 
 	// get number of unread messages
-	$num_unread = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
+	$num_unread = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
 
 	if ( empty( $num_unread ) )
 	{
@@ -109,18 +109,16 @@ function rwpm_notify()
 	}
 }
 
+/**
+ * Show number of unread messages in admin bar
+ */
 function rwpm_adminbar()
 {
 	global $wp_admin_bar;
 	global $wpdb, $current_user;
 
 	// get number of unread messages
-	$num_unread = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
-
-	if ( empty( $num_unread ) )
-	{
-		$num_unread = 0;
-	}
+	$num_unread = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
 
 	if ( $num_unread && is_admin_bar_showing() )
 	{
@@ -133,6 +131,9 @@ function rwpm_adminbar()
 	}
 }
 
+/**
+ * Ajax callback function to get list of users
+ */
 function rwpm_get_users()
 {
 	global $wpdb;
