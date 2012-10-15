@@ -27,7 +27,7 @@ function rwpm_send()
 
 		// get input fields with no html tags and all are escaped
 		$subject = strip_tags( $_POST['subject'] );
-		$content = strip_tags( $_POST['content'] );
+		$content = $_POST['content'] ;
 		$recipient = $option['type'] == 'autosuggest' ? explode( ',', $_POST['recipient'] ) : $_POST['recipient'];
 		$recipient = array_map( 'strip_tags', $recipient );
 		if ( get_magic_quotes_gpc() )
@@ -155,13 +155,17 @@ function rwpm_send()
 
 					if ( empty( $_GET['id'] ) )
 					{
-						$content = isset( $_REQUEST['content'] ) ? ( get_magic_quotes_gpc() ? stripcslashes( $_REQUEST['content'] ) : $_REQUEST['content'] ) : '';
+						$content = isset( $_REQUEST['content'] ) ?  $_REQUEST['content']  : '';
 					}
 					else
 					{
 						$id = $_GET['id'];
 						$msg = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'pm WHERE `id` = "' . $id . '" LIMIT 1' );
-						$content = "In: " . $msg->date . "\t" . $msg->sender . " Wrote:\n" . $msg->content;
+						
+						$content = '<p>&nbsp;</p>';
+						$content .= '<p>---</p>';
+						$content .= "<p><em>In: " . $msg->date . "\t" . $msg->sender . ' Wrote:</em></p>';
+						$content .= wpautop( $msg->content );
 					}
 					// Get all users of blog
 					$users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
