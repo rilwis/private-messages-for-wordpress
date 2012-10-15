@@ -41,7 +41,7 @@ global $wpdb, $current_user;
 						</span>
 						<span class="reply">
 							| <a class="reply"
-                                 href="<?php echo wp_nonce_url("?page=rwpm_send&msgID=" . $msg->id, 'rwpm-reply_inbox_msg_' . $msg->id); ?>"><?php _e('Reply', 'pm4wp'); ?></a>
+							href="<?php echo wp_nonce_url("?page=rwpm_send&recipient=$msg->sender&id=$msg->id&subject=Re: " . stripcslashes($msg->subject), 'rwpm-reply_inbox_msg_' . $msg->id); ?>"><?php _e('Reply', 'pm4wp'); ?></a>
 						</span>
                 </td>
             </tr>
