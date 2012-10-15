@@ -3,8 +3,8 @@ Contributors: rilwis
 Donate link: http://www.deluxeblogtips.com/donate
 Tags: pm, private message, private messages, message, messages
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: trunk
+Tested up to: 3.4.2
+Stable tag: 2.1.7
 
 The Private Messages For WordPress allows users of WordPress blog send private messages (PM) to each other, just like in a forum.
 
@@ -76,6 +76,11 @@ Note: the template file is just the backbone, you should modify it to fit your t
 
 == Changelog ==
 
+= 2.1.7 =
+
+* Improvement: Show notification in admin bar
+* Improvement: Add original message when reply
+
 = 2.1.6 =
 
 * Add Spanish translation
@@ -123,7 +128,7 @@ Note: the template file is just the backbone, you should modify it to fit your t
 
 = 1.6 =
 * Fix empty recipient, subject and content when send PM (bug reported by Andrey Moiseyev).
-* Add Turkish language by Hüseyin Cahid Doğan. Thank you.
+* Add Turkish language by H\u00FCseyin Cahid Do\u011Fan. Thank you.
 
 = 1.5 =
 * Fix URL of plugin pages.

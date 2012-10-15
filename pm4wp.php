@@ -3,7 +3,7 @@
 Plugin Name: Private Messages For WordPress
 Plugin URI: http://www.deluxeblogtips.com/private-messages-for-wordpress
 Description: Allow members of WordPress blog send and receive private messages (PM)
-Version: 2.1.6
+Version: 2.1.7
 Author: Rilwis
 Author URI: http://www.deluxeblogtips.com
 License: GNU GPL 2+
