@@ -42,7 +42,7 @@ add_action( 'wp_ajax_rwpm_get_users', 'rwpm_get_users' );
  */
 function rwpm_load_text_domain()
 {
-	load_plugin_textdomain( 'pm4wp', false, trailingslashit( PM4WP_DIR . 'lang' ) );
+	load_plugin_textdomain( 'pm4wp', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 }
 
 /**
