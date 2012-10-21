@@ -4,7 +4,7 @@ Donate link: http://www.deluxeblogtips.com/donate
 Tags: pm, private message, private messages, message, messages
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 
 The Private Messages For WordPress allows users of WordPress blog send private messages (PM) to each other, just like in a forum.
 
