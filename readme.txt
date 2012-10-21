@@ -76,6 +76,10 @@ Note: the template file is just the backbone, you should modify it to fit your t
 
 == Changelog ==
 
+= 2.1.8 =
+
+* Bug fix: Load translation
+
 = 2.1.7 =
 
 * Improvement: Show notification in admin bar

@@ -3,7 +3,7 @@
 Plugin Name: Private Messages For WordPress
 Plugin URI: http://www.deluxeblogtips.com/private-messages-for-wordpress
 Description: Allow members of WordPress blog send and receive private messages (PM)
-Version: 2.1.7
+Version: 2.1.8
 Author: Rilwis
 Author URI: http://www.deluxeblogtips.com
 License: GNU GPL 2+
@@ -13,7 +13,7 @@ License: GNU GPL 2+
 defined( 'ABSPATH' ) || exit;
 
 define( 'PM4WP_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PM4WP_INC_DIR', trailingslashit( PM4WP_DIR . 'inc/' ) );
+define( 'PM4WP_INC_DIR', trailingslashit( PM4WP_DIR . 'inc' ) );
 
 define( 'PM4WP_URL', plugin_dir_url( __FILE__ ) );
 define( 'PM4WP_CSS_URL', trailingslashit( PM4WP_URL . 'css' ) );
@@ -42,7 +42,7 @@ add_action( 'wp_ajax_rwpm_get_users', 'rwpm_get_users' );
  */
 function rwpm_load_text_domain()
 {
-	load_plugin_textdomain( 'pm4wp', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
+	load_plugin_textdomain( 'pm4wp', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 }
 
 /**
@@ -98,15 +98,15 @@ function rwpm_notify()
 	// get number of unread messages
 	$num_unread = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `recipient` = "' . $current_user->user_login . '" AND `read` = 0 AND `deleted` != "2"' );
 
-	if ( empty( $num_unread ) )
-	{
-		$num_unread = 0;
-	}
+	if ( !$num_unread )
+		return;
 
-	if ( $num_unread )
-	{
-		echo '<div id="message" class="error"><p><b>', sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ), '</b> <a href="admin.php?page=rwpm_inbox">', __( 'Click here to go to inbox', 'pm4wp' ), ' &raquo;</a></p></div>';
-	}
+	printf(
+		'<div id="message" class="error"><p><b>%s</b> <a href="%s">%s</a></p></div>',
+		sprintf( _n( 'You have %d new message!', 'You have %d new messages!', $num_unread, 'pm4wp' ), $num_unread ),
+		admin_url( 'admin.php?page=rwpm_inbox' ),
+		__( 'Click here to go to inbox', 'pm4wp' )
+	);
 }
 
 /**
