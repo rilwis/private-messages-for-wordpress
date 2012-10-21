@@ -22,6 +22,10 @@ Also, an email is sent to user when a new PM is received. Email template is full
 
 ### Changelog
 
+### 2.1.8
+
+* Bug fix: Load translation
+
 ### 2.1.7
 
 * Improvement: Show notification in admin bar
