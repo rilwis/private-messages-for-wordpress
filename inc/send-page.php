@@ -30,12 +30,13 @@ function rwpm_send()
 		$content = $_POST['content'] ;
 		$recipient = $option['type'] == 'autosuggest' ? explode( ',', $_POST['recipient'] ) : $_POST['recipient'];
 		$recipient = array_map( 'strip_tags', $recipient );
-		if ( get_magic_quotes_gpc() )
-		{
-			$subject = stripslashes( $subject );
-			$content = stripslashes( $content );
-			$recipient = array_map( 'stripslashes', $recipient );
-		}
+
+		//remove slash automatically in wp
+		$subject = stripslashes( $subject );
+		$content = stripslashes( $content );
+		$recipient = array_map( 'stripslashes', $recipient );
+
+		//escape sql
 		$subject = esc_sql( $subject );
 		$content = esc_sql( $content );
 		$recipient = array_map( 'esc_sql', $recipient );
@@ -164,8 +165,9 @@ function rwpm_send()
 						
 						$content = '<p>&nbsp;</p>';
 						$content .= '<p>---</p>';
-						$content .= "<p><em>In: " . $msg->date . "\t" . $msg->sender . ' Wrote:</em></p>';
+						$content .= '<p><em>' . __( 'In: ', 'pm4wp' ) . $msg->date . "\t" . $msg->sender . __( ' Wrote:', 'pm4wp' ) . '</em></p>';
 						$content .= wpautop( $msg->content );
+						$content  = stripslashes( $content );
 					}
 					// Get all users of blog
 					$users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
@@ -203,8 +205,7 @@ function rwpm_send()
                 <th><?php  wp_editor( $content, 'rw-text-editor', $settings = array( 'textarea_name' => 'content' ) );?></th>
             </tr>
         </table>
-
-	    <?php submit_button( __( 'Send', 'pm4wp' ) ); ?>
+	    <p class="submit"><input type="submit" value="Send" class="button-primary" id="submit" name="submit"></p>
     </form>
 </div>
 <?php
