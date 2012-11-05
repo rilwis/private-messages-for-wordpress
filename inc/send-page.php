@@ -162,35 +162,39 @@ function rwpm_send()
 					{
 						$id = $_GET['id'];
 						$msg = $wpdb->get_row( 'SELECT * FROM ' . $wpdb->prefix . 'pm WHERE `id` = "' . $id . '" LIMIT 1' );
-						
+
 						$content = '<p>&nbsp;</p>';
 						$content .= '<p>---</p>';
 						$content .= '<p><em>' . __( 'In: ', 'pm4wp' ) . $msg->date . "\t" . $msg->sender . __( ' Wrote:', 'pm4wp' ) . '</em></p>';
 						$content .= wpautop( $msg->content );
 						$content  = stripslashes( $content );
 					}
-					// Get all users of blog
-					$users = $wpdb->get_results( "SELECT display_name FROM $wpdb->users ORDER BY display_name ASC" );
-
+					// if auto suggest feature is turned on
 					if ( $option['type'] == 'autosuggest' )
-					{ // if auto suggest feature is turned on
+					{
 						?>
                         <input id="recipient" type="text" name="recipient" class="large-text" />
 						<?php
 
 					}
-					else
-					{ // classic way: select recipient from dropdown list
+					else // classic way: select recipient from dropdown list
+					{
+						// Get all users of blog
+						$args = array(
+							'order'   => 'ASC',
+							'orderby' => 'display_name' );
+						$values = get_users( $args );
+						$values = apply_filters( 'rwpm_recipients', $values );
 						?>
-                        <select name="recipient[]" multiple="multiple" size="5">
+						<select name="recipient[]" multiple="multiple" size="5">
 							<?php
-							foreach ( $users as $user )
+							foreach ( $values as $value )
 							{
-								$selected = ( $user->display_name == $recipient ) ? ' selected="selected"' : '';
-								echo "<option value='$user->display_name'$selected>$user->display_name</option>";
+								$selected = ( $value->display_name == $recipient ) ? ' selected="selected"' : '';
+								echo "<option value='$value->display_name'$selected>$value->display_name</option>";
 							}
 							?>
-                        </select>
+						</select>
 						<?php
 					}
 					?>
