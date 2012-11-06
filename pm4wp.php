@@ -136,10 +136,18 @@ function rwpm_adminbar()
  */
 function rwpm_get_users()
 {
-	global $wpdb;
-
 	$keyword = trim( strip_tags( $_POST['term'] ) );
-	$values = $wpdb->get_col( "SELECT DISTINCT display_name FROM {$wpdb->users} WHERE display_name LIKE '{$keyword}%'" );
-
+	$values = array();
+	$args = array( 'search' => '*' . $keyword . '*',
+	               'fields' => 'all_with_meta' );
+	$results_search_users = get_users( $args );
+	$results_search_users = apply_filters( 'rwpm_recipients', $results_search_users );
+	if ( !empty( $results_search_users ) )
+	{
+		foreach ( $results_search_users as $result )
+		{
+			$values[] = $result->display_name;
+		}
+	}
 	die( json_encode( $values ) );
 }
