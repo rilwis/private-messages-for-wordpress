@@ -31,23 +31,8 @@ function rwpm_send()
 		$recipient = $option['type'] == 'autosuggest' ? explode( ',', $_POST['recipient'] ) : $_POST['recipient'];
 		$recipient = array_map( 'strip_tags', $recipient );
 
-		//handle attachment file
-		$attachments_id = rwpm_handle_upload( 'attach_files' );
-		$content .= '<ul class="rwpm-attach" >';
-		$content .= '<p>--------------------------------------------------------------</p>';
-		$content .= '<b>' . __( 'File Attachments: ', 'pm4wp' ) . '</b>';
-		$li = '<li><a title="" href="%s" target="_blank"><b>%s</b></a></li>';
-		foreach ( $attachments_id as $attach_id )
-		{
-			$link_attachment = wp_get_attachment_url( $attach_id );
-			$filename = basename( get_attached_file( $attach_id ) );
-			$content .= sprintf(
-				$li,
-				$link_attachment,
-				$filename
-			);
-		}
-		$content .= '</ul>';
+		// hook handles attachments file
+		$content = apply_filters( 'rwpm_handles_attachments', $content );
 		//remove slash automatically in wp
 		$subject = stripslashes( $subject );
 		$content = stripslashes( $content );
@@ -221,19 +206,12 @@ function rwpm_send()
                 <th><?php _e( 'Subject', 'pm4wp' ); ?></th>
                 <td><input type="text" name="subject" value="<?php echo $subject; ?>" class="large-text" /></td>
             </tr>
+	        <?php do_action( 'rwpm_attachments_before' ); ?>
             <tr>
                 <th><?php _e( 'Content', 'pm4wp' ); ?></th>
                 <th><?php  wp_editor( $content, 'rw-text-editor', $settings = array( 'textarea_name' => 'content' ) );?></th>
             </tr>
-	        <tr>
-		        <th><?php _e( 'Attachment', 'pm4wp' ); ?></th>
-		        <td>
-			        <div class="attach_files"><input type="file" name="attach_files[]" id="attach_files" size="35" />
-				        <a href="#" class="rwpm-remove-file" onclick=""><strong>- Remove file</strong></a><br />
-			        </div>
-			        <a href="#" class="rwpm-attach-file" onclick=""><strong>+ Add new file</strong></a><br />
-		        </td>
-	        </tr>
+	        <?php do_action( 'rwpm_attachments_after' ); ?>
         </table>
 	    <p class="submit"><input type="submit" value="Send" class="button-primary" id="submit" name="submit"></p>
     </form>
