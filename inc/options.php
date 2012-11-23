@@ -30,7 +30,7 @@ function rwpm_add_menu()
 	add_options_page( __( 'Private Messages Options', 'pm4wp' ), __( 'Private Messages', 'pm4wp' ), 'manage_options', 'rwpm_option', 'rwpm_option_page' );
 
 	// Add Private Messages Menu
-	$icon_url = PM4WP_URL . 'icon.png';
+	$icon_url = PM4WP_URL . '/icon.png';
 	add_menu_page( __( 'Private Messages', 'pm4wp' ), __( 'Messages', 'pm4wp' ) . "<span class='update-plugins count-$num_unread'><span class='plugin-count'>$num_unread</span></span>", 'read', 'rwpm_inbox', 'rwpm_inbox', $icon_url );
 
 	// Inbox page
@@ -41,7 +41,6 @@ function rwpm_add_menu()
 	// Send page	
 	$send_page = add_submenu_page( 'rwpm_inbox', __( 'Send Private Message', 'pm4wp' ), __( 'Send', 'pm4wp' ), 'read', 'rwpm_send', 'rwpm_send' );
 	add_action( "admin_print_styles-$send_page", 'rwpm_admin_print_styles' );
-	add_action( 'admin_enqueue_scripts', 'rwpm_admin_print_styles_all' );
 }
 
 /**
@@ -52,19 +51,11 @@ function rwpm_add_menu()
 function rwpm_admin_print_styles()
 {
     wp_enqueue_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
+    wp_enqueue_style( 'rwpm_css', PM4WP_CSS_URL . 'style.css' );
 	wp_enqueue_script( 'rwpm_js', PM4WP_JS_URL . 'script.js', array( 'jquery-ui-autocomplete' ) );
-	do_action( 'rwpm_do_enqueue' );
+	wp_enqueue_script( 'rwpm_attachments_js', PM4WP_JS_URL . 'attach.js',array( 'jquery', 'wp-ajax-response' ));
 }
 
-/**
- * Enqueue scripts and styles with all page in plugin
- *
- * @return void
- */
-function rwpm_admin_print_styles_all()
-{
-	wp_enqueue_style( 'rwpm_css', PM4WP_CSS_URL . 'style.css' );
-}
 /**
  * Option page
  * Change number of PMs for each group
