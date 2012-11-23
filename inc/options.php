@@ -53,6 +53,7 @@ function rwpm_admin_print_styles()
     wp_enqueue_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
     wp_enqueue_style( 'rwpm_css', PM4WP_CSS_URL . 'style.css' );
 	wp_enqueue_script( 'rwpm_js', PM4WP_JS_URL . 'script.js', array( 'jquery-ui-autocomplete' ) );
+	wp_enqueue_script( 'rwpm_attachments_js', PM4WP_JS_URL . 'attach.js',array( 'jquery', 'wp-ajax-response' ));
 }
 
 /**

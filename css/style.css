@@ -5,3 +5,7 @@
 	height: auto;
 	width: 99%;
 }
+ul.rwpm-attach {
+	border: 1px solid #DEDEE3 !important;
+	background: #F3F3F7;
+}
