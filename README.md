@@ -22,6 +22,11 @@ Also, an email is sent to user when a new PM is received. Email template is full
 
 ### Changelog
 
+### 2.1.10
+* Bug fix: Send to multiple recipient
+* Improvement: Add hooks to pages
+* Improvement: Better retrieve user list
+
 ### 2.1.8
 
 * Bug fix: Load translation
