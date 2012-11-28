@@ -30,29 +30,54 @@ function rwpm_add_menu()
 	add_options_page( __( 'Private Messages Options', 'pm4wp' ), __( 'Private Messages', 'pm4wp' ), 'manage_options', 'rwpm_option', 'rwpm_option_page' );
 
 	// Add Private Messages Menu
-	$icon_url = PM4WP_URL . '/icon.png';
+	$icon_url = PM4WP_URL . 'icon.png';
 	add_menu_page( __( 'Private Messages', 'pm4wp' ), __( 'Messages', 'pm4wp' ) . "<span class='update-plugins count-$num_unread'><span class='plugin-count'>$num_unread</span></span>", 'read', 'rwpm_inbox', 'rwpm_inbox', $icon_url );
 
 	// Inbox page
-	add_submenu_page( 'rwpm_inbox', __( 'Inbox', 'pm4wp' ), __( 'Inbox', 'pm4wp' ), 'read', 'rwpm_inbox', 'rwpm_inbox' );
-	// Outbox page
-	add_submenu_page( 'rwpm_inbox', __( 'Outbox', 'pm4wp' ), __( 'Outbox', 'pm4wp' ), 'read', 'rwpm_outbox', 'rwpm_outbox' );
+	$inbox_page = add_submenu_page( 'rwpm_inbox', __( 'Inbox', 'pm4wp' ), __( 'Inbox', 'pm4wp' ), 'read', 'rwpm_inbox', 'rwpm_inbox' );
+	add_action( "admin_print_styles-{$inbox_page}", 'rwpm_admin_print_styles_inbox' );
 
-	// Send page	
+	// Outbox page
+	$outbox_page = add_submenu_page( 'rwpm_inbox', __( 'Outbox', 'pm4wp' ), __( 'Outbox', 'pm4wp' ), 'read', 'rwpm_outbox', 'rwpm_outbox' );
+	add_action( "admin_print_styles-{$outbox_page}", 'rwpm_admin_print_styles_outbox' );
+
+	// Send page
 	$send_page = add_submenu_page( 'rwpm_inbox', __( 'Send Private Message', 'pm4wp' ), __( 'Send', 'pm4wp' ), 'read', 'rwpm_send', 'rwpm_send' );
-	add_action( "admin_print_styles-$send_page", 'rwpm_admin_print_styles' );
+	add_action( "admin_print_styles-{$send_page}", 'rwpm_admin_print_styles_send' );
 }
 
 /**
- * Enqueue scripts and styles
- * 
+ * Enqueue scripts and styles for inbox page
+ *
  * @return void
  */
-function rwpm_admin_print_styles()
+function rwpm_admin_print_styles_inbox()
+{
+	do_action( 'rwpm_print_styles', 'inbox' );
+}
+
+/**
+ * Enqueue scripts and styles for outbox page
+ *
+ * @return void
+ */
+function rwpm_admin_print_styles_outbox()
+{
+	do_action( 'rwpm_print_styles', 'outbox' );
+}
+
+/**
+ * Enqueue scripts and styles for send page
+ *
+ * @return void
+ */
+function rwpm_admin_print_styles_send()
 {
     wp_enqueue_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
-    wp_enqueue_style( 'rwpm_css', PM4WP_CSS_URL . 'style.css' );
+	wp_enqueue_style( 'rwpm_css', PM4WP_CSS_URL . 'style.css' );
 	wp_enqueue_script( 'rwpm_js', PM4WP_JS_URL . 'script.js', array( 'jquery-ui-autocomplete' ) );
+
+	do_action( 'rwpm_print_styles', 'send' );
 }
 
 /**

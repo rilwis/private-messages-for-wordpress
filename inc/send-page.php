@@ -15,7 +15,7 @@ function rwpm_send()
 		$error = false;
 		$status = array();
 
-		// check if total pm of current user exceed limit
+		// Check if total pm of current user exceed limit
 		$role = $current_user->roles[0];
 		$sender = $current_user->user_login;
 		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . $wpdb->prefix . 'pm WHERE `sender` = "' . $sender . '" OR `recipient` = "' . $sender . '"' );
@@ -25,26 +25,30 @@ function rwpm_send()
 			$status[] = __( 'You have exceeded the limit of mailbox. Please delete some messages before sending another.', 'pm4wp' );
 		}
 
-		// get input fields with no html tags and all are escaped
+		// Get input fields with no html tags and all are escaped
 		$subject = strip_tags( $_POST['subject'] );
 		$content = $_POST['content'] ;
 		$recipient = $option['type'] == 'autosuggest' ? explode( ',', $_POST['recipient'] ) : $_POST['recipient'];
 		$recipient = array_map( 'strip_tags', $recipient );
 
-		//remove slash automatically in wp
+		// Allow to filter content
+		$content = apply_filters( 'rwpm_content_send', $content );
+		
+		// Remove slash automatically in wp
 		$subject = stripslashes( $subject );
 		$content = stripslashes( $content );
 		$recipient = array_map( 'stripslashes', $recipient );
 
-		//escape sql
+		// Escape sql
 		$subject = esc_sql( $subject );
 		$content = esc_sql( $content );
 		$recipient = array_map( 'esc_sql', $recipient );
 
-		// remove duplicate and empty recipient
+		// Remove duplicate and empty recipient
 		$recipient = array_unique( $recipient );
 		$recipient = array_filter( $recipient );
-		// check input fields
+		
+		// Check input fields
 		if ( empty( $recipient ) )
 		{
 			$error = true;
@@ -137,7 +141,8 @@ function rwpm_send()
 		echo '<div id="message" class="updated fade"><p>', implode( '</p><p>', $status ), '</p></div>';
 	}
 	?>
-    <form method="post" action="" id="send-form">
+	<?php do_action( 'rwpm_before_form_send' ); ?>
+    <form method="post" action="" id="send-form" enctype="multipart/form-data">
 	    <input type="hidden" name="page" value="rwpm_send" />
         <table class="form-table">
             <tr>
@@ -208,9 +213,11 @@ function rwpm_send()
                 <th><?php _e( 'Content', 'pm4wp' ); ?></th>
                 <th><?php  wp_editor( $content, 'rw-text-editor', $settings = array( 'textarea_name' => 'content' ) );?></th>
             </tr>
+	        <?php do_action( 'rwpm_form_send' ); ?>
         </table>
 	    <p class="submit"><input type="submit" value="Send" class="button-primary" id="submit" name="submit"></p>
     </form>
+	<?php do_action( 'rwpm_after_form_send' ); ?>
 </div>
 <?php
 
