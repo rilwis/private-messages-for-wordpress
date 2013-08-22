@@ -30,7 +30,7 @@ Also, an email is sent to user when a new PM is received. Email template is full
 - **Rteelen**: For Dutch translation3
 - **Mostafa**: for Persian translation
 - <a href="http://www.enricodeleo.com/" rel="nofollow">**Enrico**</a>: for Italian translation
-- <a href="http://webhostinggeeks.com/" rel="nofollow">**Web Hosting Geeks**</a>: for Romanian translation
+- <a href="http://webhostinggeeks.com/" rel="nofollow">**Web Hosting Geeks**</a>: for Romanian and Serbo-Croatian translation
 - <a href="http://teusoft.com" rel="nofollow">**Javier Santos**</a>: for Spanish translation
 
 == Installation ==
@@ -76,7 +76,13 @@ Note: the template file is just the backbone, you should modify it to fit your t
 
 == Changelog ==
 
+= 2.1.11 =
+
+* Add traditional Chinese language
+* Add Serbo-Croatian language
+
 = 2.1.10 =
+
 * Bug fix: Send to multiple recipient
 * Improvement: Add hooks to pages
 * Improvement: Better retrieve user list
